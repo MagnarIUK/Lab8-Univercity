@@ -20,9 +20,55 @@ namespace lab8
     /// </summary>
     public partial class MainPage : Page
     {
-        public MainPage()
+        private Customer _customer;
+        private Payment pay;
+        public MainPage(Customer customer)
         {
             InitializeComponent();
+            _customer = customer;
+            pay = new Payment(_customer);
+            login_holder.Text = _customer.Login;
+            money_holder.Text = _customer.Money.ToString();
+        }
+
+        private void add_good_button_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                pay.add_good(barcode_reader.Text);
+                goods.Text = pay.toString();
+                total.Text = "Усього: " + pay.getTotal();
+
+            } catch(GoodNotFoundException)
+            {
+                Tools.CreateErrorBox("Товар не знайдено");
+            }
+            
+        }
+
+        private void signout_button_Click(object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.Navigate(new Authpage());
+        }
+
+        private void buy_button_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Customer old = _customer;
+                pay.buy(_customer);
+                _customer = new Customer(old.Login);
+                pay = new Payment(_customer);
+                goods.Text = pay.toString();
+                total.Text = "Усього: " + pay.getTotal();
+                money_holder.Text = _customer.Money.ToString();
+            }
+            catch (NotEnoughMoneyException)
+            {
+                Tools.CreateErrorBox("Недостатньо грошей");
+
+            }
+
         }
     }
 }

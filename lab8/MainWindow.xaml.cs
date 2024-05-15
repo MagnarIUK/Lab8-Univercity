@@ -21,7 +21,8 @@ namespace lab8
             InitializeComponent();
             
             InitializeComponent();
-            PageController.Navigate(new Authpage());
+            this.NavigationFrame.Navigate(new Authpage());
+
         }
     }
 }

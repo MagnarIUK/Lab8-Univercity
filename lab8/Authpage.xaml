@@ -13,9 +13,11 @@
         <Label Content="Логін" HorizontalAlignment="Left" Margin="330,159,0,0" VerticalAlignment="Top" Width="95"/>
         <Label Content="Пароль" HorizontalAlignment="Left" Margin="330,214,0,0" VerticalAlignment="Top" Width="150"/>
         <TextBox x:Name="login" HorizontalAlignment="Left" Margin="325,190,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="password" HorizontalAlignment="Left" Margin="325,245,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-        <Button x:Name="login_button" Content="Увійти" HorizontalAlignment="Left" Margin="335,275,0,0" VerticalAlignment="Top" Width="105"/>
-        <Button x:Name="sighnup_button" Content="Зареєструватися" HorizontalAlignment="Left" Margin="335,305,0,0" VerticalAlignment="Top" Width="105"/>
+        <PasswordBox x:Name="password" HorizontalAlignment="Left" Margin="325,245,0,0" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="password_show" Visibility="Hidden" HorizontalAlignment="Left" Margin="325,245,0,0" VerticalAlignment="Top" Width="120"/>
+        <CheckBox x:Name="showPasswordCheckBox" Content="Показати пароль"  HorizontalAlignment="Left" Margin="451,245,0,0" VerticalAlignment="Top" Checked="ShowPassword_Checked" Unchecked="ShowPassword_Unchecked"/>
+        <Button x:Name="login_button" Content="Увійти" HorizontalAlignment="Left" Margin="335,275,0,0" VerticalAlignment="Top" Width="105" Click="login_button_Click"/>
+        <Button x:Name="sighnup_button" Content="Зареєструватися" HorizontalAlignment="Left" Margin="335,305,0,0" VerticalAlignment="Top" Width="105" Click="sighnup_button_Click"/>
 
     </Grid>
 </Page>

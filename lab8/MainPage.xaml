@@ -14,12 +14,14 @@
         </Grid.RowDefinitions>
         <TextBlock x:Name="login_holder" HorizontalAlignment="Left" Margin="70,9,0,0" TextWrapping="Wrap" Text="Логін тут" VerticalAlignment="Top"/>
         <TextBlock x:Name="money_holder" HorizontalAlignment="Left" Margin="70,34,0,0" TextWrapping="Wrap" Text="Гроші тут" VerticalAlignment="Top"/>
-        <Button x:Name="signout_button" Content="Вийти" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="50"/>
-        <ScrollViewer HorizontalAlignment="Left" Width="315" Margin="485,0,0,65"/>
-        <TextBlock x:Name="total" HorizontalAlignment="Left" Margin="537,419,0,0" TextWrapping="Wrap" Text="Усього: " VerticalAlignment="Top"/>
-        <Button x:Name="buy_button" Content="Купити" HorizontalAlignment="Left" Margin="715,420,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="barcode_reader" HorizontalAlignment="Left" Margin="140,152,0,0" TextWrapping="Wrap" Text="Введіть id..." VerticalAlignment="Top" Width="120"/>
-        <Button x:Name="add_good_button" Content="Додати" HorizontalAlignment="Left" Margin="160,180,0,0" VerticalAlignment="Top" Width="70"/>
+        <Button x:Name="signout_button" Content="Вийти" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="50" Click="signout_button_Click"/>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Width="290" Margin="485,0,0,65">
+            <TextBlock x:Name="goods" HorizontalAlignment="Left" Width="315" Margin="0" TextWrapping="Wrap"/>
+        </ScrollViewer>
 
+        <TextBlock x:Name="total" HorizontalAlignment="Left" Margin="537,419,0,0" TextWrapping="Wrap" Text="Усього: " VerticalAlignment="Top"/>
+        <Button x:Name="buy_button" Content="Купити" HorizontalAlignment="Left" Margin="715,420,0,0" VerticalAlignment="Top" Click="buy_button_Click"/>
+        <TextBox x:Name="barcode_reader" HorizontalAlignment="Left" Margin="140,152,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="add_good_button" Content="Додати" HorizontalAlignment="Left" Margin="160,180,0,0" VerticalAlignment="Top" Width="70" Click="add_good_button_Click"/>
     </Grid>
 </Page>

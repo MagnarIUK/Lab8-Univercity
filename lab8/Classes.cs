@@ -5,19 +5,20 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using System.Xml.Linq;
 
 namespace lab8
 {
     public class Customer
     {
         private string _login;
-        private string Login { get { return _login; } set { _login = value; } }
+        public string Login { get { return _login; } set { _login = value; } }
         private bool _registered;
 
         private string _password;
 
         private double _money;
-        public double Money { get { return _money; } set { _money = value; } }
+        public double Money { get { return _money; } }
 
         public Customer(string login, string password)
         {
@@ -29,12 +30,16 @@ namespace lab8
         public bool login(string pass)
         {
             var data = Tools.Read<Dictionary<string, Dictionary<string, string>>>("customers_db.json");
-            if (data[_login] != null)
+            if (data.TryGetValue(_login, out Dictionary<string, string> user))
             {
-                if (data[_login]["password"] == pass)
+                if (data[_login]["password"] == hashPassword(pass))
                 {
                     return true;
                 }
+            }
+            else
+            {
+                throw new UserNotFoundException();
             }
 
             return false;
@@ -43,13 +48,13 @@ namespace lab8
         public Customer(string login)
         {
             var data = Tools.Read<Dictionary<string, Dictionary<string, string>>>("customers_db.json");
-            if (data[login] != null)
+            if (data.TryGetValue(login, out Dictionary<string, string> user))
             {
                 _registered = true;
                 string password = data[login]["password"];
                 Login = login;
                 _password = password;
-                Money = double.Parse(data[login]["money"]);
+                _money = double.Parse(data[login]["money"]);
             }
             else
             {
@@ -64,18 +69,15 @@ namespace lab8
             var data = Tools.Read<Dictionary<string, Dictionary<string, string>>>("customers_db.json");
             if (!_registered)
             {
-                if (data[_login] == null)
+                if (!data.TryGetValue(_login, out Dictionary<string, string> user))
                 {
-                    Dictionary<string, Dictionary<string, string>> user_data = new Dictionary<string, Dictionary<string, string>>() 
+                    Dictionary<string, string> user_data = new Dictionary<string, string>()
                     {
-                        {_login, new Dictionary<string, string>() 
-                            {
-                                {"password", _password },
-                                {"money", "0.0" }
-                            } 
-                        }
+                        {"password", _password },
+                        {"money", "0" }
                     };
-                   
+                    data.Add(_login, user_data);
+                    Tools._Write<Dictionary<string, Dictionary<string, string>>>("customers_db.json", data).Wait();
                 }
                 else
                 {
@@ -110,31 +112,109 @@ namespace lab8
         public UserFoundException() : base("UserFound") { }
     }
 
+    public class GoodNotFoundException : Exception
+    {
+        public GoodNotFoundException() : base("GoodNotFound") { }
+    }
 
-    internal class Payment
+    public class NotEnoughMoneyException : Exception
+    {
+        public NotEnoughMoneyException() : base("NotEnoughMoney") { }
+    }
+
+    public class Payment
     {
         public class Good
         {
-            private int _id;
-            public int Id { get { return _id; } set { _id = value; } }
+            private string _id;
+            public string Id { get { return _id; } set { _id = value; } }
             private string _name;
             public string Name { get { return _name; } set { _name = value; } }
 
-            public Good(int id)
+            private double _price;
+            public double Price { get { return _price; } set { _price = value; } }
+
+            public Good(string id, string name, double price)
             {
                 Id = id;
-                Name = Tools.Read<Dictionary<string, string>>("db.json")[id.ToString()];
+                Name = name;
+                Price = price;
+            }
+
+            public string toString()
+            {
+                return $"{Name}: {Price}";
             }
 
         }
 
+        
+
         private List<Good> _goods;
         public List<Good> Goods { get { return _goods; } }
 
+        private Customer _customer;
+        public Customer Customer { get { return _customer; } set { _customer = value; } }
+
+        public Payment(Customer customer)
+        {
+            _customer = customer;
+            _goods = new List<Good>();
+        }
+
+        public double getTotal()
+        {
+            double total = 0;
+            for (int i = 0; i < _goods.Count(); i++)
+            {
+                total += _goods[i].Price;
+            }
+            return total;
+        }
+
+        public void buy(Customer c)
+        {
+            var data = Tools.Read<Dictionary<string, Dictionary<string, string>>>("customers_db.json");
+            double total = getTotal();
+
+            if (c.Money >= total)
+            {
+                data[c.Login]["money"] = (c.Money - total).ToString();
+                Tools._Write<Dictionary<string, Dictionary<string, string>>>("customers_db.json", data).Wait();
+                _customer = new Customer(c.Login);
+            }
+            else
+            {
+                throw new NotEnoughMoneyException();
+            }
 
 
+        }
+
+        public void add_good(string id)
+        {
+
+            var data = Tools.Read<Dictionary<string, Dictionary<string, string>>>("db.json");
+            if (data.TryGetValue(id, out Dictionary<string, string> user))
+            {
+                _goods.Add(new Good(id, data[id]["name"], double.Parse(data[id]["price"])));
+            }
+            else
+            {
+                throw new GoodNotFoundException();
+            }
+        }
 
 
+        public string toString()
+        {
+            string g = "";
+            for (int i = 0; i < _goods.Count(); i++)
+            {
+                g += $"{_goods[i].toString()}\n";
+            }
+            return g;
+        }
     }
 
 
